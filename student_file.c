@@ -6,10 +6,12 @@ struct Cell {
     struct Cell* right;
 };
 
+struct Cell*root=NULL;
+
 void insert_data(int data) {
-    struct node *tempNode = (struct node*) malloc(sizeof(struct node));
-    struct node *actual;
-    struct node *padre;
+    struct Cell *tempNode = (struct Cell*) malloc(sizeof(struct Cell));
+    struct Cell *actual;
+    struct Cell *padre;
 
     tempNode->value = data;
     tempNode->left = NULL;
@@ -22,16 +24,37 @@ void insert_data(int data) {
         padre = root; //root o tempNode
 
     } else { 
+        actual= root;
+        padre = NULL;
 
+        while(1) {
+            padre = actual;
 
+            if(data < padre -> value) {
+                actual = actual -> left;
 
+                if(actual == NULL) {
+                    padre -> left = tempNode;
+                    return;
+                }
+            }
+            else {
+                actual = actual -> right;
+
+                if(actual == NULL)  {
+                    padre -> right = tempNode;
+                    return;
+                }
+            }
+        }
     }
-
 }
 
 char* bst_fun(char* nodes){
 
- }
+
+
+}
 
 int main() {
     int i, n;
