@@ -1,76 +1,66 @@
 #include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
 
 struct Cell {
-    int value;
+    int data;
     struct Cell* left;
     struct Cell* right;
 };
 
 struct Cell*root=NULL;
 
-void insert_data(int data) {
-    struct Cell *tempNode = (struct Cell*) malloc(sizeof(struct Cell));
-    struct Cell *actual;
-    struct Cell *padre;
+void insert_node(struct Cell **root, int data) {
+    if(*root == NULL) {
+        *root = malloc(sizeof(struct Cell));
+        (*root) -> data = data;
+        (*root) -> left = NULL;
+        (*root) -> right = NULL;
+    }
 
-    tempNode->value = data;
-    tempNode->left = NULL;
-    tempNode->right = NULL;
+    else if (data < (*root) -> data) {
+        insert_node(&((*root)->left), data);
+    }
+    else {
+        insert_node(&((*root)->right), data);
+    }
+}
 
-    if(root == NULL) {
-
-        root = tempNode;
-        actual = root; //root o tempNode
-        padre = root; //root o tempNode
-
-    } else { 
-        actual= root;
-        padre = NULL;
-
-        while(1) {
-            padre = actual;
-
-            if(data < padre -> value) {
-                actual = actual -> left;
-
-                if(actual == NULL) {
-                    padre -> left = tempNode;
-                    return;
-                }
-            }
-            else {
-                actual = actual -> right;
-
-                if(actual == NULL)  {
-                    padre -> right = tempNode;
-                    return;
-                }
-            }
-        }
+void postOrden_recorrido(struct Cell *root, char* nodes, int* index) {
+    if(root != NULL) {
+        postOrden_recorrido(root->left, nodes, index);
+        postOrden_recorrido(root->right, nodes, index);
+        sprintf(&nodes[*index], "%d", root->data);
+        *index += strlen(&nodes[*index]);
     }
 }
 
 char* bst_fun(char* nodes){
+    struct Cell *root = NULL;
 
+    char*token = strtok(nodes, "  ");
+    while (token != NULL) {
+        int data = atoi(token);
+        insert_node(&root, data);
+        token = strtok(NULL, "  ");
+    }
 
+    char *result = malloc(sizeof(char) * strlen(nodes));
+    int index=0;
+    postOrden_recorrido(root, result, &index);
 
+    return result;
 }
 
 int main() {
-    int i, n;
-    printf("Ingrese la cantidad de numeros: ");
-    scanf("%d", &n);
-    int N[n];
+    char input[100];
+    printf("Ingrese la lista de numeros separdo por espacio:\n ");
+    fgets(input, 100, stdin);
 
-    printf("Ingrese los numeros : \n");
-    for(i=0; i<n;i++){
-        scanf("%d", &N[i]);
-    }
+    input[strlen(input)-1] = '\0';
 
-    for(i=0;i<n;i++) {
-        insert_data(N[i]);
-    }
-
+    char *result = bst_fun(input);
+    printf("El arbol en postorden es: %s\n", result);
 
     return 0;
 }
